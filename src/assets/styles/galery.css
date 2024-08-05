@@ -1,0 +1,35 @@
+.gallery {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: #011211;
+}
+
+.gallery__image {
+  width: 300px;
+  height: 300px;
+  margin: 20px 0px;
+}
+
+@media (min-width: 768px) {
+  .gallery__image {
+    width: 350px;
+    height: 350px;
+    margin: 20px 0px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gallery {
+    height: 370px;
+    flex-direction: row;
+  }
+  .gallery__image {
+    width: 320px;
+    height: 320px;
+    margin: 0px;
+  }
+}
