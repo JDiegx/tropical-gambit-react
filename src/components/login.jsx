@@ -1,8 +1,7 @@
-// src/components/login.jsx
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate } from 'react-router-dom';
 import "../assets/styles/login.css";
 
 const Login = () => {
@@ -10,7 +9,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate(); // Usa useNavigate para redireccionar
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -18,10 +17,9 @@ const Login = () => {
         setError('');
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            alert('Login Successful!');
             setEmail('');
             setPassword('');
-            navigate('/sales'); // Redirige a /sales después del inicio de sesión exitoso
+            navigate('/sales');
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
                 setError('User does not exist. Please check your email or contact support.');
