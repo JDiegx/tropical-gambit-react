@@ -65,6 +65,17 @@
   cursor: pointer;
 }
 
+.login__info {
+  width: 300px;
+  text-align: center;
+}
+
+@media (min-width: 425px) {
+  .login__info {
+    width: 380px;
+    text-align: center;
+  }
+}
 @media (min-width: 768px) {
   .login {
     height: 700px;
@@ -97,9 +108,10 @@
     font-size: 20px;
     margin-bottom: -20px;
   }
-}
-
-@media (min-width: 1024px) {
+  .login__info {
+    width: 500px;
+    text-align: center;
+  }
 }
 
 @media (min-width: 1440px) {
