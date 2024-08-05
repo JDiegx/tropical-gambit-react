@@ -1,0 +1,149 @@
+/* General Container Styles */
+.tropical-sales {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #011211;
+  color: white;
+}
+
+/* Header Styles */
+.tropical-sales__header {
+  width: 100%;
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.tropical-sales__logo-container {
+  width: 100%;
+  height: 80px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.tropical-sales__logo {
+  width: 390px;
+}
+
+.tropical-sales__nav {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.tropical-sales__nav-list {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.tropical-sales__nav-item {
+  font-size: 19px;
+}
+
+.tropical-sales__nav-link {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.795);
+}
+
+.tropical-sales__nav-item button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.795);
+  font-size: 19px;
+  cursor: pointer;
+}
+
+/* Main Content Styles */
+.tropical-sales__main-content {
+  display: flex;
+  width: 100%;
+}
+
+.tropical-sales__options-aside {
+  width: 250px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
+  color: #000;
+}
+
+.tropical-sales__cocktails-section {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.tropical-sales__cocktail-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.tropical-sales__cocktail-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  width: 300px;
+  color: #000;
+}
+
+.tropical-sales__cocktail-detail,
+.tropical-sales__response {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f4f4f4;
+  color: #000;
+}
+
+/* Responsive Styles */
+@media (min-width: 425px) {
+  .tropical-sales__logo {
+    width: 440px;
+  }
+}
+
+@media (min-width: 768px) {
+  .tropical-sales__header {
+    height: 230px;
+  }
+
+  .tropical-sales__logo {
+    width: 520px;
+  }
+
+  .tropical-sales__nav {
+    height: 70px;
+  }
+
+  .tropical-sales__logo-container {
+    height: 110px;
+  }
+
+  .tropical-sales__nav-list {
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 60px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tropical-sales__nav-list {
+    width: 80%;
+  }
+}
