@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
-import "../../assets/styles/tropicalGambitSales.css"
+import "../../assets/styles/tropicalGambitSales.css";
 import logoTropical from '../../assets/img/tropical-gambit-logo-svg.svg';
 
 const TropicalSales = () => {
@@ -12,8 +12,7 @@ const TropicalSales = () => {
     const [cocktailDetail, setCocktailDetail] = useState(null);
     const [createResponse, setCreateResponse] = useState('');
     const [updateResponse, setUpdateResponse] = useState('');
-    const [deleteResponse, setDeleteResponse] = useState('');
-    const [costResponse, setCostResponse] = useState('');
+    const [costs, setCosts] = useState({});
 
     const baseUrl = 'http://localhost:8080/api/cocktails';
 
@@ -38,6 +37,8 @@ const TropicalSales = () => {
 
     useEffect(() => {
         fetchCocktails();
+        const storedCosts = JSON.parse(localStorage.getItem('cocktailCosts')) || {};
+        setCosts(storedCosts);
     }, []);
 
     const getCocktailById = async (id) => {
@@ -90,24 +91,52 @@ const TropicalSales = () => {
                 method: 'DELETE',
             });
             if (response.ok) {
-                setDeleteResponse('Cocktail deleted successfully');
                 fetchCocktails(); // Actualizar la lista de cócteles
             } else {
-                setDeleteResponse('Error deleting cocktail');
+                console.error('Error deleting cocktail');
             }
         } catch (error) {
             console.error('Error deleting cocktail:', error);
         }
     };
 
-    const calculateCost = async (id, quantity) => {
-        try {
-            const response = await fetch(`${baseUrl}/${id}/costo-venta?cantidad=${quantity}`);
-            const data = await response.json();
-            setCostResponse(`Cost of sale: ${data}`);
-        } catch (error) {
-            console.error('Error calculating cost:', error);
+    const updateCostsInLocalStorage = (newCosts) => {
+        localStorage.setItem('cocktailCosts', JSON.stringify(newCosts));
+        setCosts(newCosts);
+    };
+
+    const addCocktailQuantity = (id) => {
+        const quantity = parseInt(prompt("Enter quantity to add"), 10);
+        if (quantity > 0) {
+            setCosts(prevCosts => {
+                const newCosts = { ...prevCosts };
+                newCosts[id] = (newCosts[id] || 0) + quantity;
+                updateCostsInLocalStorage(newCosts);
+                return newCosts;
+            });
         }
+    };
+
+    const subtractCocktailQuantity = (id) => {
+        const quantity = parseInt(prompt("Enter quantity to subtract"), 10);
+        if (quantity > 0) {
+            setCosts(prevCosts => {
+                const newCosts = { ...prevCosts };
+                newCosts[id] = Math.max((newCosts[id] || 0) - quantity, 0);
+                updateCostsInLocalStorage(newCosts);
+                return newCosts;
+            });
+        }
+    };
+
+    const calculateTotalCost = () => {
+        return Object.entries(costs).reduce((total, [id, quantity]) => {
+            const cocktail = cocktails.find(cocktail => cocktail.id === parseInt(id));
+            if (cocktail) {
+                return total + (cocktail.precio * quantity);
+            }
+            return total;
+        }, 0);
     };
 
     return (
@@ -164,20 +193,26 @@ const TropicalSales = () => {
                     <button onClick={() => updateCocktail(document.getElementById('update-id').value, document.getElementById('update-name').value, document.getElementById('update-description').value)} className='tropical-sales__button'>Update</button>
                     <div id="update-response" className="tropical-sales__response">{updateResponse}</div>
 
-                    <h2 className='tropical-sales__section-title'>Delete Cocktail</h2>
-                    <input type="number" placeholder="Enter cocktail ID" className='tropical-sales__input' id="delete-id" />
-                    <button onClick={() => deleteCocktail(document.getElementById('delete-id').value)} className='tropical-sales__button'>Delete</button>
-                    <div id="delete-response" className="tropical-sales__response">{deleteResponse}</div>
-
-                    <h2 className='tropical-sales__section-title'>Calculate Cost</h2>
-                    <input type="number" placeholder="Enter cocktail ID" className='tropical-sales__input' id="cost-id" />
-                    <input type="number" placeholder="Enter quantity" className='tropical-sales__input' id="cost-quantity" />
-                    <button onClick={() => calculateCost(document.getElementById('cost-id').value, document.getElementById('cost-quantity').value)} className='tropical-sales__button'>Calculate Cost</button>
-                    <div id="cost-response" className="tropical-sales__response">{costResponse}</div>
+                    <h2 className='tropical-sales__section-title'>Total Cost</h2>
+                    <div id="cost-summary" className="tropical-sales__cost-summary">
+                        {cocktails.length > 0 && (
+                            <ul>
+                                {cocktails.map(cocktail => (
+                                    costs[cocktail.id] > 0 && (
+                                        <li key={cocktail.id}>
+                                            {cocktail.nombre}: {costs[cocktail.id]} x {cocktail.precio} USD = {costs[cocktail.id] * cocktail.precio} USD
+                                            <button onClick={() => subtractCocktailQuantity(cocktail.id)} className='tropical-sales__button tropical-sales__button--subtract'>-</button>
+                                        </li>
+                                    )
+                                ))}
+                            </ul>
+                        )}
+                        <h3>Total: {calculateTotalCost()} USD</h3>
+                    </div>
                 </aside>
-                <section className="tropical-sales__cocktails-section">
-                    <h2 className='tropical-sales__section-title'>Available Cocktails</h2>
-                    <div id="all-cocktails" className="tropical-sales__cocktail-list">
+
+                <section className="tropical-sales__cocktail-section">
+                    <div id="cocktail-list" className="tropical-sales__cocktail-list">
                         {cocktails.length > 0 ? (
                             cocktails.map(cocktail => (
                                 <div key={cocktail.id} className="tropical-sales__cocktail-item tropical-sales__card">
@@ -190,6 +225,8 @@ const TropicalSales = () => {
                                     <p><strong>Country of Origin:</strong> {cocktail.paisorigen}</p>
                                     <p><strong>Expiration Date:</strong> {cocktail.fechavencimiento}</p>
                                     <p><strong>Preparation Time:</strong> {cocktail.tiempopreparacion} min</p>
+                                    <button onClick={() => addCocktailQuantity(cocktail.id)} className='tropical-sales__button tropical-sales__button--add'>Add Quantity</button>
+                                    <button onClick={() => deleteCocktail(cocktail.id)} className='tropical-sales__button tropical-sales__button--delete'>Delete</button>
                                 </div>
                             ))
                         ) : (
